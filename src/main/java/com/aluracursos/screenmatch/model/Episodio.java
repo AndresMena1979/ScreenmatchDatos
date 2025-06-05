@@ -1,7 +1,13 @@
 package com.aluracursos.screenmatch.model;
 
+import jakarta.persistence.*;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+
+
+@Entity // identificar que es una entidad o una tabla
+@Table(name = "episodios")  //Colocar nombre a la tabla
 
 public class Episodio {
     private Integer temporada;
@@ -9,6 +15,22 @@ public class Episodio {
     private Integer numeroEpisodio;
     private Double evaluacion;
     private LocalDate fechaDeLanzamiento;
+
+    @ManyToOne
+    private Serie serie;    //atributo de serie que identifica a que serie va a pertenecer los episodios
+
+    public Episodio(){   //Constructor predeterminado
+
+
+    }
+
+    @Id                  // Marca el campo como clave primaria de la entidad.
+    @GeneratedValue(strategy = GenerationType.IDENTITY)  //ID generado automaticamente,Le dice a JPA que el valor del ID se genere automáticamente usando una estrategia específica.
+                                                         // GenerationType.IDENTITY significa: "Deja que la base de datos lo genere automáticamente (como una columna autoincremental)."
+    private Long Id;
+
+
+
 
     public Episodio(Integer numero, DatosEpisodio d) {
         this.temporada = numero;
@@ -26,7 +48,7 @@ public class Episodio {
         }
 
     }
-
+//-----------getter y setter--------------------------------------------------
     public Integer getTemporada() {
         return temporada;
     }
@@ -67,6 +89,14 @@ public class Episodio {
         this.fechaDeLanzamiento = fechaDeLanzamiento;
     }
 
+    public Serie getSerie() {
+        return serie;
+    }
+
+    public void setSerie(Serie serie) {
+        this.serie = serie;
+    }
+//------------------------------------------------------------------------------------
     @Override
     public String toString() {
         return

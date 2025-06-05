@@ -3,6 +3,7 @@ package com.aluracursos.screenmatch.principal;
 import com.aluracursos.screenmatch.model.DatosSerie;
 import com.aluracursos.screenmatch.model.DatosTemporadas;
 import com.aluracursos.screenmatch.model.Serie;
+import com.aluracursos.screenmatch.repository.SerieRepository;
 import com.aluracursos.screenmatch.service.ConsumoAPI;
 import com.aluracursos.screenmatch.service.ConvierteDatos;
 import java.util.ArrayList;
@@ -18,9 +19,15 @@ public class Principal {
     private final String API_KEY = "&apikey=464cb2ce";
     private ConvierteDatos conversor = new ConvierteDatos();
     private List<DatosSerie> datosSeries= new ArrayList<>();              //para series web
+    private  SerieRepository repositorio;
+
+    public Principal(SerieRepository repository) {     // Constructor
+       this. repositorio = repository;
+    }
 
 
     public void muestraElMenu() {
+
         var opcion = -1;
         while (opcion != 0) {
             var menu = """
@@ -78,21 +85,29 @@ public class Principal {
     }
     private void buscarSerieWeb() {
         DatosSerie datos = getDatosSerie();  // Se crea la variable datos como tipo DatosSerie y se le da el valor de getDatosSerie, el cual retorna los datos convertidos de json a java
-        datosSeries.add(datos);        // se agrega la informacion de los datos al array datosSeries
+        Serie serie = new Serie(datos); // datos obtenidos se envian a Serie
+        repositorio.save(serie); // guardamos la serie
+
+       // datosSeries.add(datos);        // se agrega la informacion de los datos al array datosSeries
        System.out.println(datos);
     }
 
     private void mostrarSeriesBuscadas() {
 
-        List<Serie> series = new ArrayList<>();                // Se crea array series de tipo Serie el cual tiene la misma informacion de datosSeries, con toString propio
-        series = datosSeries.stream()    // Crea una lista de objetos Serie a partir de una lista de datos crudos (datosSeries), y transforma con stream la lista en una secuencia de datos
+        List<Serie> series = repositorio.findAll();                // Se crea array series de tipo Serie el cual tiene la misma informacion de datosSeries, con toString propio
+                                                                   // Ahora con repositorio.findAll(), traemos todas las series
+        series.stream()                                     //  Toma la lista de series y comienza a procesarla nuevamente como un stream, ya que solo se puede usar el stream una vez
+                .sorted(Comparator.comparing(Serie::getGenero)) // Ordena las series por el valor devuelto por el método getGenero().
+                .forEach(System.out::println);                  //imprime */
+
+     //------ Codigo anulado---------------------
+      /*  series = datosSeries.stream()    // Crea una lista de objetos Serie a partir de una lista de datos crudos (datosSeries), y transforma con stream la lista en una secuencia de datos
 
                 .map(d -> new Serie(d))            //  Usa .map() para transformar cada elemento 'd' de datosSeries en un nuevo objeto Serie.
                 .collect(Collectors.toList());              // Recoge (collect) todos los objetos Serie generados en una nueva lista.
         series.stream()                                     //  Toma la lista de series y comienza a procesarla nuevamente como un stream, ya que solo se puede usar el stream una vez
                 .sorted(Comparator.comparing(Serie::getGenero)) // Ordena las series por el valor devuelto por el método getGenero().
-                .forEach(System.out::println);                  //imprime
-
+                .forEach(System.out::println);                  //imprime */
 
     }
 }

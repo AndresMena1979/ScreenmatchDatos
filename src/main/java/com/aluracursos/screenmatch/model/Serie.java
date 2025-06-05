@@ -2,12 +2,24 @@ package com.aluracursos.screenmatch.model;
 
 import com.aluracursos.screenmatch.service.ConsultaChatGPT;
 import com.fasterxml.jackson.annotation.JsonAlias;
+import jakarta.persistence.*;
 
+import java.util.List;
 import java.util.OptionalDouble;   // para importar la clase OptionalDouble, que es parte del paquete estándar de Java (java.util), y se usa cuando trabajas con valores double
                                    // opcionales (es decir, que pueden o no estar presentes).
 
-public class Serie {
+@Entity                  //Indica que esto va hacer una Tabla de base de datos
+@Table(name = "series")  //Para cambiar el nombre de la tabla y no tome el nombre de la clase
 
+
+
+public class Serie {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)  //ID generado automaticamente
+
+    private Long Id;
+
+    @Column(unique = true)          //Para que no permita tener titulos repetidos
     private String titulo;
 
     private Integer totalTemporadas;
@@ -16,12 +28,24 @@ public class Serie {
 
     private String poster;
 
+    @Enumerated(EnumType.STRING)  // Para indicar que hay un Enum
     private Categoria genero;
 
     private String actores;
 
     private String sinopsis;
 
+   // @Transient    // Para indicar que hay una lista de episodios pero no se van a usar en el momento
+
+    @OneToMany(mappedBy = "serie") // Relacion entre la tabla serie y la tabla episodio de 1 serie a muchos episodios
+                                   // mappedBy = "serie", es el campo que relaciona uno con el otro, private Serie serie; que se creo en episodio
+
+
+    private List<Episodio> episodios;
+
+    public Serie(){  //Constructor predeterminado excencial para que trabaje la opcion 3
+
+    }
     public Serie(DatosSerie datosSerie){   //constructor de Serie
 
         this.titulo = datosSerie.titulo();
@@ -32,16 +56,22 @@ public class Serie {
         this.genero =Categoria.fromString(datosSerie.genero().split(",")[0].trim()); //Esta línea convierte el primer género de una cadena (que probablemente contiene varios géneros separados por comas)
                                                                                            // en una instancia del enum Categoria. Si hay mas de un genero selecciona el primero(genero que estan divididos por la ,)
         this.actores =datosSerie.actores();
-        this.sinopsis = ConsultaChatGPT.obtenerTraduccion(datosSerie.sinopsis());
+        this.sinopsis=datosSerie.sinopsis();
 
-//        try {
-//            this.sinopsis = ConsultaChatGPT.obtenerTraduccion(datosSerie.sinopsis());
-//        } catch (Exception e) {
-//            System.out.println("Error al traducir sinopsis: " + e.getMessage());
-//            this.sinopsis = "Sinopsis no disponible";
-//        }
+ //------------------------------
+      //para usar el traductor
+
+    /*  this.sinopsis = ConsultaChatGPT.obtenerTraduccion(datosSerie.sinopsis());
+
+        try {
+            this.sinopsis = ConsultaChatGPT.obtenerTraduccion(datosSerie.sinopsis());
+        } catch (Exception e) {
+            System.out.println("Error al traducir sinopsis: " + e.getMessage());
+            this.sinopsis = "Sinopsis no disponible";
+        } */
 
     }
+//--------------------------------
 
    /* OptionalDouble.of = es una forma segura y clara de trabajar con resultados double que podrían no existir.
       Double.valueOf = Convierte ese String (por ejemplo "8.5") en un objeto Double.
@@ -57,6 +87,14 @@ public class Serie {
 
 //----------------------------------------getter y setter
 
+
+    public Long getId() {
+        return Id;
+    }
+
+    public void setId(Long id) {
+        Id = id;
+    }
 
     public String getTitulo() {
         return titulo;
