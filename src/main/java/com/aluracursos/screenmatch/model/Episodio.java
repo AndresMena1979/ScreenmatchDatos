@@ -10,6 +10,11 @@ import java.time.format.DateTimeParseException;
 @Table(name = "episodios")  //Colocar nombre a la tabla
 
 public class Episodio {
+
+    @Id                  // Marca el campo como clave primaria de la entidad.
+    @GeneratedValue(strategy = GenerationType.IDENTITY)  //ID generado automaticamente,Le dice a JPA que el valor del ID se genere automáticamente usando una estrategia específica.
+    // GenerationType.IDENTITY significa: "Deja que la base de datos lo genere automáticamente (como una columna autoincremental)."
+    private Long Id;
     private Integer temporada;
     private String titulo;
     private Integer numeroEpisodio;
@@ -24,10 +29,7 @@ public class Episodio {
 
     }
 
-    @Id                  // Marca el campo como clave primaria de la entidad.
-    @GeneratedValue(strategy = GenerationType.IDENTITY)  //ID generado automaticamente,Le dice a JPA que el valor del ID se genere automáticamente usando una estrategia específica.
-                                                         // GenerationType.IDENTITY significa: "Deja que la base de datos lo genere automáticamente (como una columna autoincremental)."
-    private Long Id;
+
 
 
 
@@ -96,6 +98,8 @@ public class Episodio {
     public void setSerie(Serie serie) {
         this.serie = serie;
     }
+
+
 //------------------------------------------------------------------------------------
     @Override
     public String toString() {

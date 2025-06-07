@@ -14,6 +14,8 @@ import java.util.OptionalDouble;   // para importar la clase OptionalDouble, que
 
 
 public class Serie {
+
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)  //ID generado automaticamente
 
@@ -37,9 +39,9 @@ public class Serie {
 
    // @Transient    // Para indicar que hay una lista de episodios pero no se van a usar en el momento
 
-    @OneToMany(mappedBy = "serie") // Relacion entre la tabla serie y la tabla episodio de 1 serie a muchos episodios
+    @OneToMany(mappedBy = "serie", cascade = CascadeType.ALL, fetch = FetchType.EAGER) // Relacion entre la tabla serie y la tabla episodio de 1 serie a muchos episodios
                                    // mappedBy = "serie", es el campo que relaciona uno con el otro, private Serie serie; que se creo en episodio
-
+                                   //cascade = CascadeType.ALL: Esto hace que todas las operaciones realizadas sobre el episodio (guardar, actualizar, eliminar) también se apliquen automáticamente a la serie relacionada.
 
     private List<Episodio> episodios;
 
@@ -152,6 +154,17 @@ public class Serie {
         this.sinopsis = sinopsis;
     }
 
+    public String getEpisodios() {
+        return episodios.toString();
+    }
+
+    public void setEpisodios(List<Episodio> episodios) {
+        episodios.forEach(e ->e.setSerie(this));
+        this.episodios=episodios;
+
+    }
+
+
     @Override
     public String toString() {
         return  "genero=" + genero + '\'' +
@@ -160,6 +173,13 @@ public class Serie {
                 ", evaluacion=" + evaluacion +
                 ", poster='" + poster + '\'' +
                 ", actores='" + actores + '\'' +
-                ", sinopsis='" + sinopsis + '\'';
+                ", sinopsis='" + sinopsis + '\''+
+                ", episodios='" + episodios + '\'';
     }
+
+
+
+
+
+
 }
