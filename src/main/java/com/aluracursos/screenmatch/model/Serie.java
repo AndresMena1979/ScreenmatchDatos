@@ -37,7 +37,7 @@ public class Serie {
 
     private String sinopsis;
 
-   // @Transient    // Para indicar que hay una lista de episodios pero no se van a usar en el momento
+   // @Transient   //Para indicar que hay una lista de episodios pero no se van a usar en el momento
 
     @OneToMany(mappedBy = "serie", cascade = CascadeType.ALL, fetch = FetchType.EAGER) // Relacion entre la tabla serie y la tabla episodio de 1 serie a muchos episodios
                                    // mappedBy = "serie", es el campo que relaciona uno con el otro, private Serie serie; que se creo en episodio
